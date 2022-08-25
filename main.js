@@ -1,1 +1,5 @@
-console.log({first:"James"});
+/******/ (() => { // webpackBootstrap
+var __webpack_exports__ = {};
+
+/******/ })()
+;
