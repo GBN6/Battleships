@@ -22,18 +22,53 @@ const gameboard = () => {
     .map(() => Array(boardLength).fill(0));
   const missed = [];
 
-  function isPlacingPossible(x, y, dir, length) {
+  function isPlacingPossible(x, y, dir, leng) {
     if (dir) {
-      for (let i = y; i < y + length; i++) {
+      for (let i = y; i < y + leng; i++) {
         if (gameboardGrid[x][i]) return false;
-    }
-        else {
-            for (let i = x; i < x + length; i++) {
-                if (gameboardGrid[i][y]) return false;
-            }
-        }
-      
+      }
+    } else {
+      for (let i = x; i < x + leng; i++) {
+        if (gameboardGrid[i][y]) return false;
+      }
     }
     return true;
+  }
+
+  function allShipsSunk(sunkValue) {
+    return sunkValue.every((el) => el === true);
+  }
+
+  // dir values
+  // 0: vertical
+  // 1: horizontal
+
+  function placeShip(x, y, dir, currentShipName) {
+    const currentShip = allShips[currentShipName];
+
+    if (x > boardLength - 1 || y > boardLength - 1) return false;
+    if (dir === 1 && y + currentShip.leng < boardLength + 1) {
+      if (!isPlacingPossible(x, y, dir, currentShip.leng)) return false;
+      for (let i = 0; i < boardLength; i++) {
+        for (let j = 0; j < boardLength; j++) {
+          if (i === x && j < y + currentShip.leng && j >= y) {
+            gameboardGrid[i][j] = currentShip;
+          }
+        }
+      }
+      return currentShip.leng;
+    }
+    if (dir === 0 && x + currentShip.leng < boardLength + 1) {
+      if (!isPlacingPossible(x, y, dir, currentShip.leng)) return false;
+      for (let i = 0; i < boardLength; i++) {
+        for (let j = 0; j < boardLength; j++) {
+          if (i >= x && i < x + currentShip.leng && j === y) {
+            gameboardGrid[i][j] = currentShip;
+          }
+        }
+      }
+      return currentShip.leng;
+    }
+    return false;
   }
 };

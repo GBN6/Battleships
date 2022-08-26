@@ -1,4 +1,4 @@
-const ship = (length) => {
+const ship = (leng) => {
   let hitCounter = 0;
 
   function hit() {
@@ -7,11 +7,11 @@ const ship = (length) => {
   }
 
   function isSunk() {
-    if (hitCounter === length) return true;
+    if (hitCounter === leng) return true;
     return false;
   }
 
-  return { length, hit, isSunk };
+  return { leng, hit, isSunk };
 };
 
 export default ship;
