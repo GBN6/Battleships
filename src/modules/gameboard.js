@@ -71,4 +71,22 @@ const gameboard = () => {
     }
     return false;
   }
+
+  function trackMissedHits(x, y) {
+    missed.push([x, y]);
+  }
+
+  function hitReceived(x, y) {
+    if (gameboardGrid[x][y] === 1) return null;
+    if (gameboardGrid[x][y]) {
+      gameboardGrid[x][y] = gameboardGrid[x][y].hit();
+      return [x, y];
+    }
+
+    trackMissedHits(x, y);
+    return false;
+  }
+  return { placeShip, hitReceived, allShipsSunk, missed };
 };
+
+export default gameboard;
