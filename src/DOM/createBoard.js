@@ -7,8 +7,8 @@ const createGameboard = (() => {
       for (let j = 0; j < 10; j++) {
         const square = document.createElement('div');
         square.classList.add('player-square');
-        square.classList.add(`${i}x`);
-        square.classList.add(`${j}y`);
+        square.classList.add(`x${i}`);
+        square.classList.add(`y${j}`);
         playerBoard.append(square);
       }
     }
@@ -17,8 +17,8 @@ const createGameboard = (() => {
       for (let j = 0; j < 10; j++) {
         const square = document.createElement('div');
         square.classList.add('computer-square');
-        square.classList.add(`${i}x`);
-        square.classList.add(`${j}y`);
+        square.classList.add(`x${i}`);
+        square.classList.add(`y${j}`);
         computerBoard.append(square);
       }
     }
