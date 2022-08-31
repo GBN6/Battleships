@@ -1,6 +1,6 @@
 import gameboard from './gameboard';
 
-const computer = (() => {
+const computer = () => {
   const board = gameboard();
 
   function randomBoat(len) {
@@ -34,6 +34,6 @@ const computer = (() => {
     return attack;
   }
   return { board, initializeComputerBoats, attackSquare };
-})();
+};
 
 export default computer;

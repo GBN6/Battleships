@@ -32,7 +32,13 @@ const createGameboard = (() => {
     }
   }
 
-  return { board };
+  function clearHover() {
+    const playerSquare = document.querySelectorAll('.player-square');
+
+    playerSquare.forEach((tile) => tile.classList.remove('hover'));
+  }
+
+  return { board, clearHover };
 })();
 
 export default createGameboard;
