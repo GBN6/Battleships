@@ -24,7 +24,9 @@ function playerAttack(e) {
   let attackResult = players.attackSquare(coords[0], coords[1], comp.board);
 
   showAttackedSquare(attackResult, 'computer-square');
-  if (attackResult === 4) {
+  console.log(attackResult.length);
+  if (attackResult.length === 4) {
+    console.log('someone should win')
     gameover.gameoverDisplayWinner('player');
     const resetButton = document.querySelector('.btn-reset');
     resetButton.addEventListener('click', resetGame);
@@ -36,7 +38,8 @@ function playerAttack(e) {
   attackResult = comp.attackSquare(players.board);
   showAttackedSquare(attackResult, 'player-square');
 
-  if (attackResult === 4) {
+  if (attackResult.length === 4) {
+    console.log('someone should win')
     gameover.gameoverDisplayWinner('computer');
     const resetButton = document.querySelector('.btn-reset');
     resetButton.addEventListener('click', resetGame);
