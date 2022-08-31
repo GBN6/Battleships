@@ -88,3 +88,7 @@ body {
 .ship-placed {
     background-color: lightblue;
 }
+
+.hover {
+    background-color: aqua;
+}
