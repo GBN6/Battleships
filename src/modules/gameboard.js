@@ -20,7 +20,6 @@ const gameboard = () => {
   const gameboardGrid = Array(boardLength)
     .fill()
     .map(() => Array(boardLength).fill(0));
-  const missed = [];
 
   function isPlacingPossible(x, y, dir, leng) {
     if (dir) {
@@ -35,8 +34,9 @@ const gameboard = () => {
     return true;
   }
 
-  function allShipsSunk(sunkValue) {
-    return sunkValue.every((el) => el === true);
+  function allShipsSunk(ships) {
+    const sunkValue = ships.map((boat) => boat.isSunk());
+    return sunkValue.every((value) => value === true);
   }
 
   // dir values
@@ -72,21 +72,18 @@ const gameboard = () => {
     return false;
   }
 
-  function trackMissedHits(x, y) {
-    missed.push([x, y]);
-  }
-
   function hitReceived(x, y) {
     if (gameboardGrid[x][y] === 1) return null;
     if (gameboardGrid[x][y]) {
       gameboardGrid[x][y] = gameboardGrid[x][y].hit();
-      return [x, y];
+      if (allShipsSunk(allShips)) return [x, y, 1, 0];
+      return [x, y, 1];
     }
 
-    trackMissedHits(x, y);
-    return false;
+    gameboardGrid[x][y] = 1;
+    return [x, y, 0];
   }
-  return { placeShip, hitReceived, allShipsSunk, missed };
+  return { placeShip, hitReceived, allShipsSunk };
 };
 
 export default gameboard;

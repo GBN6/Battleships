@@ -1,6 +1,6 @@
 import gameboard from './gameboard';
 
-const player = (() => {
+const player = () => {
   const board = gameboard();
   let currentShip = 5;
   function attackSquare(x, y, opponentBoard) {
@@ -17,6 +17,6 @@ const player = (() => {
   }
 
   return { board, attackSquare, playerPlaceShip };
-})();
+};
 
 export default player;
