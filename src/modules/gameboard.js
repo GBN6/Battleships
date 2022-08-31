@@ -8,13 +8,13 @@ const gameboard = () => {
   // 4-Submarine-3
   // 5-Patrol Boat-2
 
-  const carrier = ship(5);
-  const battleship = ship(4);
-  const destroyer = ship(3);
-  const submarine = ship(3);
-  const patrol = ship(2);
+  const boat5 = ship(5);
+  const boat4 = ship(4);
+  const boat3 = ship(3);
+  const boat2 = ship(3);
+  const boat1 = ship(2);
 
-  const allShips = [patrol, submarine, destroyer, battleship, carrier];
+  const allShips = [boat1, boat2, boat3, boat4, boat5];
 
   const boardLength = 10;
   const gameboardGrid = Array(boardLength)

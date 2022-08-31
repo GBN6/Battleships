@@ -3,29 +3,37 @@ import gameboard from './gameboard';
 const computer = (() => {
   const board = gameboard();
 
-  function initializeComputer() {
-    let x = Math.floor(Math.random() * 10);
-    let y = Math.floor(Math.random() * 10);
-    let rngDir = Math.floor(Math.random() * 1);
-    let n = 0;
-    while (n <= 4) {
-      if (board.placeShip(x, y, rngDir, n) === false) {
-        x = Math.floor(Math.random() * 10);
-        y = Math.floor(Math.random() * 10);
-        continue;
-      }
-      board.placeShip(x, y, rngDir, n);
-      rngDir = Math.floor(Math.random() * 1);
-      n++;
+  function randomBoat(len) {
+    const x = Math.floor(Math.random() * 10);
+    const y = Math.floor(Math.random() * 10);
+    const rngDir = Math.floor(Math.random() * 1);
+
+    const place = board.placeShip(x, y, rngDir, len);
+
+    if (!place) {
+      randomBoat(len);
     }
+  }
+
+  function initializeComputerBoats() {
+    randomBoat(0);
+    randomBoat(1);
+    randomBoat(2);
+    randomBoat(3);
+    randomBoat(4);
   }
 
   function attackSquare(opponentBoard) {
     const x = Math.floor(Math.random() * 10);
     const y = Math.floor(Math.random() * 10);
-    return opponentBoard.hitReceived(x, y);
+    const attack = opponentBoard.hitReceived(x, y);
+
+    if (attack === null) {
+      return attackSquare(opponentBoard);
+    }
+    return attack;
   }
-  return { board, initializeComputer, attackSquare };
+  return { board, initializeComputerBoats, attackSquare };
 })();
 
 export default computer;
