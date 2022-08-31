@@ -22,7 +22,7 @@ const controller = (() => {
 
   const changeAxis = (e) => {
     if (e.target.textContent === 'Axis: X') {
-      e.target.textContent = 'Axis: y';
+      e.target.textContent = 'Axis: Y';
     } else {
       e.target.textContent = 'Axis: X';
     }

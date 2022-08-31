@@ -1,12 +1,10 @@
-import player from "./modules/player";
-import computer from "./modules/computer";
-import playerDrawShips from "./DOM/drawShip";
-import createGameboard from "./DOM/createBoard";
-import controller from "./DOM/getAxisAndCoords"
-
+import player from './modules/player';
+import computer from './modules/computer';
+import playerDrawShips from './DOM/drawShip';
+import createGameboard from './DOM/createBoard';
+import controller from './DOM/getAxisAndCoords';
 
 createGameboard.board();
-
 
 function playerClick(e) {
   const coords = controller.getCoords(e);
@@ -15,5 +13,8 @@ function playerClick(e) {
   if (lenOfCurShip) playerDrawShips(coords[0], coords[1], dir, lenOfCurShip);
 }
 
-const ptiles = document.querySelectorAll('.player-square');
-ptiles.forEach((ptile) => ptile.addEventListener('click', playerClick));
+const playerSquare = document.querySelectorAll('.player-square');
+playerSquare.forEach((square) => square.addEventListener('click', playerClick));
+
+const axisButton = document.querySelector('.btn-axis');
+axisButton.addEventListener('click', controller.changeAxis);
