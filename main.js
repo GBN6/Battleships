@@ -582,7 +582,9 @@ function playerAttack(e) {
   let attackResult = players.attackSquare(coords[0], coords[1], comp.board);
 
   (0,_DOM_showAttackedSquare__WEBPACK_IMPORTED_MODULE_8__["default"])(attackResult, 'computer-square');
-  if (attackResult === 4) {
+  console.log(attackResult.length);
+  if (attackResult.length === 4) {
+    console.log('someone should win')
     _DOM_gameover__WEBPACK_IMPORTED_MODULE_6__["default"].gameoverDisplayWinner('player');
     const resetButton = document.querySelector('.btn-reset');
     resetButton.addEventListener('click', resetGame);
@@ -594,7 +596,8 @@ function playerAttack(e) {
   attackResult = comp.attackSquare(players.board);
   (0,_DOM_showAttackedSquare__WEBPACK_IMPORTED_MODULE_8__["default"])(attackResult, 'player-square');
 
-  if (attackResult === 4) {
+  if (attackResult.length === 4) {
+    console.log('someone should win')
     _DOM_gameover__WEBPACK_IMPORTED_MODULE_6__["default"].gameoverDisplayWinner('computer');
     const resetButton = document.querySelector('.btn-reset');
     resetButton.addEventListener('click', resetGame);
