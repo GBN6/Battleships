@@ -218,12 +218,12 @@ const playerDrawShips = (x, y, dir, len) => {
   if (dir) {
     for (let i = y; i < y + len; i++) {
       const tile = document.querySelector(`.player-square.x${x}.y${i}`);
-      tile.classList.add('select');
+      tile.classList.add('ship-placed');
     }
   } else {
     for (let i = x; i < x + len; i++) {
       const tile = document.querySelector(`.player-square.x${i}.y${y}`);
-      tile.classList.add('select');
+      tile.classList.add('ship-placed');
     }
   }
 };
@@ -388,20 +388,21 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
 _DOM_createBoard__WEBPACK_IMPORTED_MODULE_3__["default"].board();
-
 
 function playerClick(e) {
   const coords = _DOM_getAxisAndCoords__WEBPACK_IMPORTED_MODULE_4__["default"].getCoords(e);
   const dir = _DOM_getAxisAndCoords__WEBPACK_IMPORTED_MODULE_4__["default"].whichAxis();
-  console.log(coords)
   const lenOfCurShip = _modules_player__WEBPACK_IMPORTED_MODULE_0__["default"].playerPlaceShip(coords[0], coords[1], dir);
   if (lenOfCurShip) (0,_DOM_drawShip__WEBPACK_IMPORTED_MODULE_2__["default"])(coords[0], coords[1], dir, lenOfCurShip);
 }
 
-const ptiles = document.querySelectorAll('.player-square');
-ptiles.forEach((ptile) => ptile.addEventListener('click', playerClick));
+const playerSquare = document.querySelectorAll('.player-square');
+playerSquare.forEach((square) => square.addEventListener('click', playerClick));
+
+const axisButton = document.querySelector('.btn-axis');
+axisButton.addEventListener('click', _DOM_getAxisAndCoords__WEBPACK_IMPORTED_MODULE_4__["default"].changeAxis);
+
 })();
 
 /******/ })()
