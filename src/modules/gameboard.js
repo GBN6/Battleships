@@ -17,6 +17,7 @@ const gameboard = () => {
   const allShips = [boat1, boat2, boat3, boat4, boat5];
 
   const boardLength = 10;
+  let counterHover = 4;
   const gameboardGrid = Array(boardLength)
     .fill()
     .map(() => Array(boardLength).fill(0));
@@ -56,6 +57,7 @@ const gameboard = () => {
           }
         }
       }
+      counterHover -= 1; 
       return currentShip.leng;
     }
     if (dir === 0 && x + currentShip.leng < boardLength + 1) {
@@ -67,6 +69,7 @@ const gameboard = () => {
           }
         }
       }
+      counterHover -= 1;
       return currentShip.leng;
     }
     return false;
@@ -83,7 +86,13 @@ const gameboard = () => {
     gameboardGrid[x][y] = 1;
     return [x, y, 0];
   }
-  return { placeShip, hitReceived, allShipsSunk };
+
+  function shipToHover() {
+    if (counterHover === -1) return false;
+    return allShips[counterHover].leng;
+  }
+
+  return { placeShip, hitReceived, allShipsSunk, shipToHover };
 };
 
 export default gameboard;

@@ -12,7 +12,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _gameboard__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2);
 
 
-const player = (() => {
+const player = () => {
   const board = (0,_gameboard__WEBPACK_IMPORTED_MODULE_0__["default"])();
   let currentShip = 5;
   function attackSquare(x, y, opponentBoard) {
@@ -29,7 +29,7 @@ const player = (() => {
   }
 
   return { board, attackSquare, playerPlaceShip };
-})();
+};
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (player);
 
@@ -53,19 +53,19 @@ const gameboard = () => {
   // 4-Submarine-3
   // 5-Patrol Boat-2
 
-  const carrier = (0,_ship__WEBPACK_IMPORTED_MODULE_0__["default"])(5);
-  const battleship = (0,_ship__WEBPACK_IMPORTED_MODULE_0__["default"])(4);
-  const destroyer = (0,_ship__WEBPACK_IMPORTED_MODULE_0__["default"])(3);
-  const submarine = (0,_ship__WEBPACK_IMPORTED_MODULE_0__["default"])(3);
-  const patrol = (0,_ship__WEBPACK_IMPORTED_MODULE_0__["default"])(2);
+  const boat5 = (0,_ship__WEBPACK_IMPORTED_MODULE_0__["default"])(5);
+  const boat4 = (0,_ship__WEBPACK_IMPORTED_MODULE_0__["default"])(4);
+  const boat3 = (0,_ship__WEBPACK_IMPORTED_MODULE_0__["default"])(3);
+  const boat2 = (0,_ship__WEBPACK_IMPORTED_MODULE_0__["default"])(3);
+  const boat1 = (0,_ship__WEBPACK_IMPORTED_MODULE_0__["default"])(2);
 
-  const allShips = [patrol, submarine, destroyer, battleship, carrier];
+  const allShips = [boat1, boat2, boat3, boat4, boat5];
 
   const boardLength = 10;
+  let counterHover = 4;
   const gameboardGrid = Array(boardLength)
     .fill()
     .map(() => Array(boardLength).fill(0));
-  const missed = [];
 
   function isPlacingPossible(x, y, dir, leng) {
     if (dir) {
@@ -80,8 +80,9 @@ const gameboard = () => {
     return true;
   }
 
-  function allShipsSunk(sunkValue) {
-    return sunkValue.every((el) => el === true);
+  function allShipsSunk(ships) {
+    const sunkValue = ships.map((boat) => boat.isSunk());
+    return sunkValue.every((value) => value === true);
   }
 
   // dir values
@@ -101,6 +102,7 @@ const gameboard = () => {
           }
         }
       }
+      counterHover -= 1; 
       return currentShip.leng;
     }
     if (dir === 0 && x + currentShip.leng < boardLength + 1) {
@@ -112,26 +114,30 @@ const gameboard = () => {
           }
         }
       }
+      counterHover -= 1;
       return currentShip.leng;
     }
     return false;
-  }
-
-  function trackMissedHits(x, y) {
-    missed.push([x, y]);
   }
 
   function hitReceived(x, y) {
     if (gameboardGrid[x][y] === 1) return null;
     if (gameboardGrid[x][y]) {
       gameboardGrid[x][y] = gameboardGrid[x][y].hit();
-      return [x, y];
+      if (allShipsSunk(allShips)) return [x, y, 1, 0];
+      return [x, y, 1];
     }
 
-    trackMissedHits(x, y);
-    return false;
+    gameboardGrid[x][y] = 1;
+    return [x, y, 0];
   }
-  return { placeShip, hitReceived, allShipsSunk, missed };
+
+  function shipToHover() {
+    if (counterHover === -1) return false;
+    return allShips[counterHover].leng;
+  }
+
+  return { placeShip, hitReceived, allShipsSunk, shipToHover };
 };
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (gameboard);
@@ -178,29 +184,37 @@ __webpack_require__.r(__webpack_exports__);
 const computer = (() => {
   const board = (0,_gameboard__WEBPACK_IMPORTED_MODULE_0__["default"])();
 
-  function initializeComputer() {
-    let x = Math.floor(Math.random() * 10);
-    let y = Math.floor(Math.random() * 10);
-    let rngDir = Math.floor(Math.random() * 1);
-    let n = 0;
-    while (n <= 4) {
-      if (board.placeShip(x, y, rngDir, n) === false) {
-        x = Math.floor(Math.random() * 10);
-        y = Math.floor(Math.random() * 10);
-        continue;
-      }
-      board.placeShip(x, y, rngDir, n);
-      rngDir = Math.floor(Math.random() * 1);
-      n++;
+  function randomBoat(len) {
+    const x = Math.floor(Math.random() * 10);
+    const y = Math.floor(Math.random() * 10);
+    const rngDir = Math.floor(Math.random() * 1);
+
+    const place = board.placeShip(x, y, rngDir, len);
+
+    if (!place) {
+      randomBoat(len);
     }
+  }
+
+  function initializeComputerBoats() {
+    randomBoat(0);
+    randomBoat(1);
+    randomBoat(2);
+    randomBoat(3);
+    randomBoat(4);
   }
 
   function attackSquare(opponentBoard) {
     const x = Math.floor(Math.random() * 10);
     const y = Math.floor(Math.random() * 10);
-    return opponentBoard.hitReceived(x, y);
+    const attack = opponentBoard.hitReceived(x, y);
+
+    if (attack === null) {
+      return attackSquare(opponentBoard);
+    }
+    return attack;
   }
-  return { board, initializeComputer, attackSquare };
+  return { board, initializeComputerBoats, attackSquare };
 })();
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (computer);
@@ -243,6 +257,14 @@ const createGameboard = (() => {
   function board() {
     const playerBoard = document.querySelector('.player-gameboard');
     const computerBoard = document.querySelector('.computer-gameboard');
+
+    while (playerBoard.firstChild) {
+      playerBoard.removeChild(playerBoard.firstChild);
+    }
+
+    while (computerBoard.firstChild) {
+      computerBoard.removeChild(computerBoard.firstChild);
+    }
 
     for (let i = 0; i < 10; i++) {
       for (let j = 0; j < 10; j++) {
@@ -289,9 +311,9 @@ const controller = (() => {
     if (e.target.classList.length === 3) {
       x = e.target.classList[1].charAt(1);
       y = e.target.classList[2].charAt(1);
+      return [Number(x), Number(y)];
     }
-
-    return [Number(x), Number(y)];
+    return false;
   };
 
   const whichAxis = () => {
@@ -303,17 +325,85 @@ const controller = (() => {
 
   const changeAxis = (e) => {
     if (e.target.textContent === 'Axis: X') {
-      e.target.textContent = 'Axis: y';
+      e.target.textContent = 'Axis: Y';
     } else {
       e.target.textContent = 'Axis: X';
     }
   };
 
-
   return { getCoords, whichAxis, changeAxis };
 })();
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (controller);
+
+
+/***/ }),
+/* 8 */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+const hoverShip = (() => {
+  const boardLength = 10;
+
+  function isPlacingPossible(x, y, dir, leng) {
+    if (dir) {
+      for (let i = y; i < y + leng; i++) {
+        const square = document.querySelector(`.player-square.x${x}.y${i}`);
+        if (
+          square.classList.contains('ship-placed') ||
+          square.classList.contains('hover')
+        ) {
+          return false;
+        }
+      }
+    } else {
+      for (let i = x; i < x + leng; i++) {
+        const square = document.querySelector(`.player-square.x${i}.y${y}`);
+        if (
+          square.classList.contains('ship-placed') ||
+          square.classList.contains('hover')
+        ) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  function hover(x, y, dir, len) {
+    if (x > boardLength - 1 || y > boardLength - 1) return;
+    if (dir === 1 && y + len < boardLength + 1) {
+      if (!isPlacingPossible(x, y, dir, len)) return;
+      for (let i = 0; i < boardLength; i++) {
+        for (let j = 0; j < boardLength; j++) {
+          if (i === x && j < y + len && j >= y) {
+            document
+              .querySelector(`.player-square.x${i}.y${j}`)
+              .classList.add('hover');
+          }
+        }
+      }
+    }
+    if (dir === 0 && x + len < boardLength + 1) {
+      if (!isPlacingPossible(x, y, dir, len)) return;
+      for (let i = 0; i < boardLength; i++) {
+        for (let j = 0; j < boardLength; j++) {
+          if (i >= x && i < x + len && j === y) {
+            document
+              .querySelector(`.player-square.x${i}.y${j}`)
+              .classList.add('hover');
+          }
+        }
+      }
+    }
+  }
+  return { hover };
+})();
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (hoverShip);
 
 
 /***/ })
@@ -382,6 +472,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _DOM_drawShip__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(5);
 /* harmony import */ var _DOM_createBoard__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(6);
 /* harmony import */ var _DOM_getAxisAndCoords__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(7);
+/* harmony import */ var _DOM_hoverShip__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(8);
+
 
 
 
@@ -390,10 +482,12 @@ __webpack_require__.r(__webpack_exports__);
 
 _DOM_createBoard__WEBPACK_IMPORTED_MODULE_3__["default"].board();
 
+let play = (0,_modules_player__WEBPACK_IMPORTED_MODULE_0__["default"])();
+
 function playerClick(e) {
   const coords = _DOM_getAxisAndCoords__WEBPACK_IMPORTED_MODULE_4__["default"].getCoords(e);
   const dir = _DOM_getAxisAndCoords__WEBPACK_IMPORTED_MODULE_4__["default"].whichAxis();
-  const lenOfCurShip = _modules_player__WEBPACK_IMPORTED_MODULE_0__["default"].playerPlaceShip(coords[0], coords[1], dir);
+  const lenOfCurShip = play.playerPlaceShip(coords[0], coords[1], dir);
   if (lenOfCurShip) (0,_DOM_drawShip__WEBPACK_IMPORTED_MODULE_2__["default"])(coords[0], coords[1], dir, lenOfCurShip);
 }
 
@@ -403,6 +497,21 @@ playerSquare.forEach((square) => square.addEventListener('click', playerClick));
 const axisButton = document.querySelector('.btn-axis');
 axisButton.addEventListener('click', _DOM_getAxisAndCoords__WEBPACK_IMPORTED_MODULE_4__["default"].changeAxis);
 
+
+function playerShipHover(e) {
+  const hoverCounter = play.board.shipToHover();
+  if (!hoverCounter) {
+    playerSquare.forEach((square) => square.removeEventListener('mouseover', playerShipHover));
+    playerSquare.forEach((square) => square.removeEventListener('mouseleave', playerShipHover))
+  }
+  const coords = _DOM_getAxisAndCoords__WEBPACK_IMPORTED_MODULE_4__["default"].getCoords(e);
+  const direction = _DOM_getAxisAndCoords__WEBPACK_IMPORTED_MODULE_4__["default"].whichAxis();
+  // createGameboard.board();
+  _DOM_hoverShip__WEBPACK_IMPORTED_MODULE_5__["default"].hover(coords[0], coords[1], direction, hoverCounter);
+}
+
+playerSquare.forEach((square) => square.addEventListener('mouseover', playerShipHover))
+playerSquare.forEach((square) => square.addEventListener('mouseleave', playerShipHover))
 })();
 
 /******/ })()
