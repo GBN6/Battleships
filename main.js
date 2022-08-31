@@ -181,7 +181,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _gameboard__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2);
 
 
-const computer = (() => {
+const computer = () => {
   const board = (0,_gameboard__WEBPACK_IMPORTED_MODULE_0__["default"])();
 
   function randomBoat(len) {
@@ -215,7 +215,7 @@ const computer = (() => {
     return attack;
   }
   return { board, initializeComputerBoats, attackSquare };
-})();
+};
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (computer);
 
@@ -231,13 +231,13 @@ __webpack_require__.r(__webpack_exports__);
 const playerDrawShips = (x, y, dir, len) => {
   if (dir) {
     for (let i = y; i < y + len; i++) {
-      const tile = document.querySelector(`.player-square.x${x}.y${i}`);
-      tile.classList.add('ship-placed');
+      const square = document.querySelector(`.player-square.x${x}.y${i}`);
+      square.classList.add('ship-placed');
     }
   } else {
     for (let i = x; i < x + len; i++) {
-      const tile = document.querySelector(`.player-square.x${i}.y${y}`);
-      tile.classList.add('ship-placed');
+      const square = document.querySelector(`.player-square.x${i}.y${y}`);
+      square.classList.add('ship-placed');
     }
   }
 };
@@ -287,7 +287,13 @@ const createGameboard = (() => {
     }
   }
 
-  return { board };
+  function clearHover() {
+    const playerSquare = document.querySelectorAll('.player-square');
+
+    playerSquare.forEach((tile) => tile.classList.remove('hover'));
+  }
+
+  return { board, clearHover };
 })();
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (createGameboard);
@@ -406,6 +412,80 @@ const hoverShip = (() => {
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (hoverShip);
 
 
+/***/ }),
+/* 9 */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+const gameover = (() => {
+  function gameoverDisplayWinner(winner) {
+    const playerInstruction = document.querySelector('.player-instructions');
+    if (winner === 'player') {
+      playerInstruction.textContent = 'Game over! Player WON';
+      playerInstruction.classList.add('winner');
+    } else {
+      playerInstruction.textContent = 'Game over! Computer WON';
+      playerInstruction.classList.add('loser');
+    }
+
+    const buttonReset = document.createElement('button');
+    buttonReset.textContent = 'Restart';
+    buttonReset.classList.add('btn-reset');
+    document.querySelector('.reset').append(buttonReset);
+  }
+
+  return { gameoverDisplayWinner };
+})();
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (gameover);
+
+
+/***/ }),
+/* 10 */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+function updateInstruction(option) {
+  const playerInstruction = document.querySelector('.player-instructions');
+  if (option === 1) {
+    playerInstruction.textContent = 'Now attack your opponent';
+  } else if (option === 2) {
+    playerInstruction.textContent = 'Place your ships first';
+  }
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (updateInstruction);
+
+
+/***/ }),
+/* 11 */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+const showAttackedSquare = (array, board) => {
+  const attackedSquare = document.querySelector(
+    `.${board}.x${array[0]}.y${array[1]}`
+  );
+
+  if (array[2]) {
+    attackedSquare.classList.add('hit');
+  } else {
+    attackedSquare.classList.add('miss');
+  }
+};
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (showAttackedSquare);
+
+
 /***/ })
 /******/ 	]);
 /************************************************************************/
@@ -473,45 +553,122 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _DOM_createBoard__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(6);
 /* harmony import */ var _DOM_getAxisAndCoords__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(7);
 /* harmony import */ var _DOM_hoverShip__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(8);
+/* harmony import */ var _DOM_gameover__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(9);
+/* harmony import */ var _DOM_updateInstructions__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(10);
+/* harmony import */ var _DOM_showAttackedSquare__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(11);
 
 
 
 
 
 
+
+
+
+
+let players = (0,_modules_player__WEBPACK_IMPORTED_MODULE_0__["default"])();
+let comp = (0,_modules_computer__WEBPACK_IMPORTED_MODULE_1__["default"])();
 
 _DOM_createBoard__WEBPACK_IMPORTED_MODULE_3__["default"].board();
-
-let play = (0,_modules_player__WEBPACK_IMPORTED_MODULE_0__["default"])();
-
-function playerClick(e) {
-  const coords = _DOM_getAxisAndCoords__WEBPACK_IMPORTED_MODULE_4__["default"].getCoords(e);
-  const dir = _DOM_getAxisAndCoords__WEBPACK_IMPORTED_MODULE_4__["default"].whichAxis();
-  const lenOfCurShip = play.playerPlaceShip(coords[0], coords[1], dir);
-  if (lenOfCurShip) (0,_DOM_drawShip__WEBPACK_IMPORTED_MODULE_2__["default"])(coords[0], coords[1], dir, lenOfCurShip);
-}
-
-const playerSquare = document.querySelectorAll('.player-square');
-playerSquare.forEach((square) => square.addEventListener('click', playerClick));
+comp.initializeComputerBoats();
 
 const axisButton = document.querySelector('.btn-axis');
-axisButton.addEventListener('click', _DOM_getAxisAndCoords__WEBPACK_IMPORTED_MODULE_4__["default"].changeAxis);
+const playerSquare = document.querySelectorAll('.player-square');
+const compSquare = document.querySelectorAll('.computer-square');
 
+function playerAttack(e) {
+  const coords = _DOM_getAxisAndCoords__WEBPACK_IMPORTED_MODULE_4__["default"].getCoords(e);
+  if (!coords) return;
+  let attackResult = players.attackSquare(coords[0], coords[1], comp.board);
+
+  (0,_DOM_showAttackedSquare__WEBPACK_IMPORTED_MODULE_8__["default"])(attackResult, 'computer-square');
+  if (attackResult === 4) {
+    _DOM_gameover__WEBPACK_IMPORTED_MODULE_6__["default"].gameoverDisplayWinner('player');
+    const resetButton = document.querySelector('.btn-reset');
+    resetButton.addEventListener('click', resetGame);
+    compSquare.forEach((square) =>
+      square.removeEventListener('click', playerAttack)
+    );
+    return;
+  }
+  attackResult = comp.attackSquare(players.board);
+  (0,_DOM_showAttackedSquare__WEBPACK_IMPORTED_MODULE_8__["default"])(attackResult, 'player-square');
+
+  if (attackResult === 4) {
+    _DOM_gameover__WEBPACK_IMPORTED_MODULE_6__["default"].gameoverDisplayWinner('computer');
+    const resetButton = document.querySelector('.btn-reset');
+    resetButton.addEventListener('click', resetGame);
+    compSquare.forEach((square) =>
+      square.removeEventListener('click', playerAttack)
+    );
+  }
+}
+
+function playerPlaceShip(e) {
+  _DOM_createBoard__WEBPACK_IMPORTED_MODULE_3__["default"].clearHover();
+  const coords = _DOM_getAxisAndCoords__WEBPACK_IMPORTED_MODULE_4__["default"].getCoords(e);
+  const dir = _DOM_getAxisAndCoords__WEBPACK_IMPORTED_MODULE_4__["default"].whichAxis();
+  const lenOfCurShip = players.playerPlaceShip(coords[0], coords[1], dir);
+  (0,_DOM_drawShip__WEBPACK_IMPORTED_MODULE_2__["default"])(coords[0], coords[1], dir, lenOfCurShip);
+  if (lenOfCurShip === 2) {
+    (0,_DOM_updateInstructions__WEBPACK_IMPORTED_MODULE_7__["default"])(1);
+    compSquare.forEach((square) =>
+      square.addEventListener('click', playerAttack)
+    );
+  }
+}
 
 function playerShipHover(e) {
-  const hoverCounter = play.board.shipToHover();
+  const hoverCounter = players.board.shipToHover();
   if (!hoverCounter) {
-    playerSquare.forEach((square) => square.removeEventListener('mouseover', playerShipHover));
-    playerSquare.forEach((square) => square.removeEventListener('mouseleave', playerShipHover))
+    playerSquare.forEach((square) =>
+      square.removeEventListener('mouseover', playerShipHover)
+    );
+    playerSquare.forEach((square) =>
+      square.removeEventListener('mouseleave', playerShipHover)
+    );
   }
   const coords = _DOM_getAxisAndCoords__WEBPACK_IMPORTED_MODULE_4__["default"].getCoords(e);
   const direction = _DOM_getAxisAndCoords__WEBPACK_IMPORTED_MODULE_4__["default"].whichAxis();
-  // createGameboard.board();
+  _DOM_createBoard__WEBPACK_IMPORTED_MODULE_3__["default"].clearHover();
   _DOM_hoverShip__WEBPACK_IMPORTED_MODULE_5__["default"].hover(coords[0], coords[1], direction, hoverCounter);
 }
 
-playerSquare.forEach((square) => square.addEventListener('mouseover', playerShipHover))
-playerSquare.forEach((square) => square.addEventListener('mouseleave', playerShipHover))
+function resetGame() {
+  _DOM_createBoard__WEBPACK_IMPORTED_MODULE_3__["default"].board();
+  players = (0,_modules_player__WEBPACK_IMPORTED_MODULE_0__["default"])();
+  comp = (0,_modules_computer__WEBPACK_IMPORTED_MODULE_1__["default"])();
+  comp.initializeComputerBoats();
+
+  playerSquare.forEach((square) =>
+    square.addEventListener('click', playerPlaceShip)
+  );
+  playerSquare.forEach((square) =>
+    square.addEventListener('mouseover', playerShipHover)
+  );
+  playerSquare.forEach((square) =>
+    square.addEventListener('mouseleave', playerShipHover)
+  );
+  axisButton.addEventListener('click', _DOM_getAxisAndCoords__WEBPACK_IMPORTED_MODULE_4__["default"].changeAxis);
+
+  const resetButton = document.querySelector('.btn-reset');
+  resetButton.remove();
+  (0,_DOM_updateInstructions__WEBPACK_IMPORTED_MODULE_7__["default"])(2);
+}
+
+playerSquare.forEach((square) =>
+  square.addEventListener('click', playerPlaceShip)
+);
+
+playerSquare.forEach((square) =>
+  square.addEventListener('mouseover', playerShipHover)
+);
+playerSquare.forEach((square) =>
+  square.addEventListener('mouseleave', playerShipHover)
+);
+
+axisButton.addEventListener('click', _DOM_getAxisAndCoords__WEBPACK_IMPORTED_MODULE_4__["default"].changeAxis);
+
 })();
 
 /******/ })()
