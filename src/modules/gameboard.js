@@ -82,7 +82,6 @@ const gameboard = () => {
       if (allShipsSunk(allShips)) return [x, y, 1, 0];
       return [x, y, 1];
     }
-
     gameboardGrid[x][y] = 1;
     return [x, y, 0];
   }

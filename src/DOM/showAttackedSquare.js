@@ -5,8 +5,10 @@ const showAttackedSquare = (array, board) => {
 
   if (array[2]) {
     attackedSquare.classList.add('hit');
+    attackedSquare.classList.add('hit-mark');
   } else {
     attackedSquare.classList.add('miss');
+    attackedSquare.classList.add('miss-mark');
   }
 };
 
