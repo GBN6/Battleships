@@ -14,15 +14,28 @@ html {
 
 body {
     min-height: 100vh;
-    padding: 4rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.background-image {
     background-image: url(./bg.jpg);
     /* background-image: linear-gradient(to right, rgb(0, 0, 0, 0.6), rgb(0, 0, 0, 0.6)), url(./bg.jpg); */
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    display: block;
+    filter: blur(4px);
+    -webkit-filter: blur(4px);
+    left: 0;
+    position: fixed;
+    right: 0;
+    z-index: 1;
+    height: 100vh;
+}
+
+.content {
+    z-index: 2;
 }
 
 .header {
@@ -31,6 +44,7 @@ body {
     align-items: center;
     gap: 15px;
     margin-bottom: 5rem;
+    margin-top: 2rem;
 }
 
 .header .title {
@@ -96,19 +110,34 @@ body {
 }
 
 .ship-placed {
-    background-color: lightblue;
+    background-color: lightgoldenrodyellow
 }
 
 .hover {
-    background-color: aqua;
-}
-
-.hit {
-    background-color: rgb(144, 238, 144, 0.8);
+    background-color: yellow;
 }
 
 .miss {
+    background-color: lightblue
+}
+
+.hit {
     background-color: rgb(240, 128, 128, 0.8);
+}
+
+.miss-mark {
+    background-image: url(./miss-mark.png);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-origin: content-box;
+    pointer-events: none;
+}
+
+.hit-mark {
+    background-image: url(./red-mark.png);
+    background-size: cover;
+    pointer-events: none;
 }
 
 
@@ -122,10 +151,8 @@ body {
 }
 
 @media (max-width: 500px) {
-    body {
-        padding: 10px;
-    }
     .header {
+        margin-top: 10px;
         margin-bottom: 10px;
         gap: 5px;
     }
@@ -141,6 +168,8 @@ body {
     .player-gameboard, .computer-gameboard {
         height: 240px;
         width: 240px;
+        gap: 3px;
+        padding: 2px;
     }
 
     .btn-axis {
@@ -148,7 +177,7 @@ body {
         padding: 0.5rem 1rem;
     }
     .btn-reset {
-        margin-top: 15px;
+        margin-top: 10px;
         padding: 1rem 1.5rem;
         font-size: 2rem;
     }
